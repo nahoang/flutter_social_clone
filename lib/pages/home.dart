@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class Home extends StatefulWidget {
   @override
@@ -8,6 +11,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isAuth = false;
+
+  login() {
+    googleSignIn.signIn();
+  }
 
   Widget buildAuthScreen() {
     return Text('Authenticated');
@@ -20,7 +27,8 @@ class _HomeState extends State<Home> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.teal, Colors.purple],
+            colors: [Theme.of(context).primaryColorDark,
+            Theme.of(context).accentColor.withOpacity(0.8)],
           ),
         ),
         alignment: Alignment.center,
@@ -37,7 +45,7 @@ class _HomeState extends State<Home> {
               ),
             ),
             GestureDetector(
-              onTap: () => print('tapped'),
+              onTap: () => login,
               child: Container(
                 width: 260.0,
                 height: 60.0,

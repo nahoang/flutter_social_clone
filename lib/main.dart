@@ -12,6 +12,10 @@ class MyApp extends StatelessWidget {
       title: 'FlutterShare',
       debugShowCheckedModeBanner: false,
       home: Home(),
+      theme: ThemeData(
+        primaryColor: Colors.deepPurple,
+        accentColor: Colors.teal,
+      ),
     );
   }
 }
