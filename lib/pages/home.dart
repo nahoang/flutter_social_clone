@@ -13,6 +13,7 @@ class _HomeState extends State<Home> {
   bool isAuth = false;
 
   login() {
+    print('test');
     googleSignIn.signIn();
   }
 
