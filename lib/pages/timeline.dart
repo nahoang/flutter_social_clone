@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_clone/widgets/progress.dart';
 
 import '../widgets/header.dart';
 
@@ -12,7 +13,7 @@ class _TimelineState extends State<Timeline> {
   Widget build(context) {
     return Scaffold(
       appBar: header(context, isAppTitle: true),
-      body: Text('timeline')
+      body: Text('profile')
     );
   }
 }
