@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_clone/pages/home.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
 }

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_clone/pages/activity_feed.dart';
+import 'package:flutter_social_clone/pages/create_account.dart';
 import 'package:flutter_social_clone/pages/profile.dart';
 import 'package:flutter_social_clone/pages/search.dart';
 import 'package:flutter_social_clone/pages/timeline.dart';
@@ -8,6 +10,8 @@ import 'package:flutter_social_clone/pages/upload.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
+final usersRef = FirebaseFirestore.instance.collection('users');
+final DateTime timestamp = DateTime.now();
 
 class Home extends StatefulWidget {
   @override
@@ -47,7 +51,7 @@ class _HomeState extends State<Home> {
 
   handleSignIn(GoogleSignInAccount account) {
     if (account != null) {
-      print('User sign in!: $account');
+      createUserInFireStore();
       setState(() {
         isAuth = true;
       });
@@ -56,6 +60,29 @@ class _HomeState extends State<Home> {
         isAuth = false;
       });
     }
+  }
+
+  createUserInFireStore() async {
+    // 1)check if user exists in users collection database
+    final GoogleSignInAccount  user = googleSignIn.currentUser;
+    final DocumentSnapshot doc = await usersRef.doc(user.id).get();
+    
+    if (!doc.exists) {
+      //2) if user does not exists, take them to the create account page.
+      final username = await Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccount()));
+
+      //3) get username from create account, use it to make new user document
+      usersRef.doc(user.id).set({
+        'id': user.id,
+        'username': username,
+        'photoUrl': user.photoUrl,
+        'email': user.email,
+        'displayName': user.displayName,
+        'bio': '',
+        'timestamp': timestamp
+      });
+    }
+
   }
 
   login() {
@@ -84,7 +111,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: PageView(
         children: [
-          Timeline(),
+
+          // Timeline(),
+          RaisedButton(onPressed: logout, child: Text('Logout'),),
           ActivityFeed(),
           Upload(),
           Search(),

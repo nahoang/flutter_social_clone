@@ -4,7 +4,7 @@ import 'package:flutter_social_clone/widgets/progress.dart';
 
 import '../widgets/header.dart';
 
-final usersRef = Firestore.instance.collection('users');
+final usersRef = FirebaseFirestore.instance.collection('users');
 
 class Timeline extends StatefulWidget {
 
@@ -22,10 +22,10 @@ class _TimelineState extends State<Timeline> {
   }
 
   getUsers() async {
-    final QuerySnapshot snapshot = await usersRef.getDocuments();
+    final QuerySnapshot snapshot = await usersRef.get();
 
     setState(() {
-      users = snapshot.documents;
+      users = snapshot.docs;
       print('users: $users');
     });
 
