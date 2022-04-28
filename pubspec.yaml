@@ -13,17 +13,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: ^0.16.0
-  firebase_auth: ^0.20.0+1
-  firebase_core: ^0.7.0
-  firebase_messaging: ^8.0.0-dev.14
-  image_picker: ^0.6.7+7
+  cloud_firestore: ^3.1.13
+  firebase_auth: ^3.3.16
+  firebase_core: ^1.15.0
+  firebase_messaging: ^11.2.15
+  image_picker: ^0.8.5
   google_sign_in: ^4.5.3
   geolocator: ^5.3.2+2
   uuid: ^2.2.2
   image: ^2.1.14
   animator: ^2.0.1
-  path_provider: ^1.6.14
+  path_provider: ^2.0.9
   timeago: ^2.0.27
   cached_network_image:
   flutter_svg:
