@@ -9,9 +9,12 @@ import 'package:flutter_social_clone/pages/timeline.dart';
 import 'package:flutter_social_clone/pages/upload.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../models/user.dart';
+
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final usersRef = FirebaseFirestore.instance.collection('users');
 final DateTime timestamp = DateTime.now();
+late User currentUser;
 
 class Home extends StatefulWidget {
   @override
@@ -65,7 +68,7 @@ class _HomeState extends State<Home> {
   createUserInFireStore() async {
     // 1)check if user exists in users collection database
     final GoogleSignInAccount  user = googleSignIn.currentUser;
-    final DocumentSnapshot doc = await usersRef.doc(user.id).get();
+    DocumentSnapshot doc = await usersRef.doc(user.id).get();
     
     if (!doc.exists) {
       //2) if user does not exists, take them to the create account page.
@@ -83,6 +86,7 @@ class _HomeState extends State<Home> {
       });
     }
 
+    currentUser = User.fromDocument(doc);
   }
 
   login() {
