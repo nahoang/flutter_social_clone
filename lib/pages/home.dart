@@ -17,6 +17,7 @@ final DateTime timestamp = DateTime.now();
 late User currentUser;
 
 class Home extends StatefulWidget {
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -119,7 +120,7 @@ class _HomeState extends State<Home> {
           // Timeline(),
           RaisedButton(onPressed: logout, child: Text('Logout'),),
           ActivityFeed(),
-          Upload(),
+          Upload(currentUser: currentUser),
           Search(),
           Profile(),
         ],
