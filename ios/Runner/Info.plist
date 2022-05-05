@@ -60,5 +60,9 @@
     <string>Access to pick a photo</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Access to pick a photo</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This application requires location services to work</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>This application requires location services to work</string>
 </dict>
 </plist>
