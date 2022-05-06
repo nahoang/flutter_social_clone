@@ -6,7 +6,6 @@ import 'package:flutter_social_clone/pages/activity_feed.dart';
 import 'package:flutter_social_clone/pages/create_account.dart';
 import 'package:flutter_social_clone/pages/profile.dart';
 import 'package:flutter_social_clone/pages/search.dart';
-import 'package:flutter_social_clone/pages/timeline.dart';
 import 'package:flutter_social_clone/pages/upload.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -19,7 +18,7 @@ final GoogleSignIn googleSignIn = GoogleSignIn();
 final usersRef = FirebaseFirestore.instance.collection('users');
 final postsRef = FirebaseFirestore.instance.collection('posts');
 final DateTime timestamp = DateTime.now();
-late User currentUser;
+User? currentUser;
 
 class Home extends StatefulWidget {
 
