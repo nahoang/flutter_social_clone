@@ -48,6 +48,7 @@ class _UploadState extends State<Upload> {
     Navigator.pop(context);
     final ImagePicker _picker = ImagePicker();
     XFile? file = await _picker.pickImage(source: ImageSource.gallery);
+    var test = File(file!.path);
     setState(() {
       this.file = File(file!.path);
     });
@@ -118,7 +119,7 @@ class _UploadState extends State<Upload> {
   compressImage() async {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
-    Im.Image imageFile = Im.decodeImage(File(file!.path).readAsBytesSync());
+    Im.Image imageFile = Im.decodeImage(file?.readAsBytesSync());
     final compressedImageFile = File('$path/img_$postId.jpg')
       ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
     setState(() {
@@ -126,22 +127,22 @@ class _UploadState extends State<Upload> {
     });
   }
 
-  Future<String> uploadImage(imageFile) async {
-
+  Future<String?> uploadImage(imageFile) async {
     UploadTask uploadTask =
         storageRef.child('post_$postId.jpg').putFile(imageFile);
     // TaskSnapshot storageSnap =  await uploadTask.onComplete;
     // String downloadUrl = await storageSnap.ref.getDownloadURL();
-    String url = '';
-    uploadTask.then((res) async {
-        url = await res.ref.getDownloadURL();
-    });
-    print('url $url');
-    return url;
+
+    // uploadTask.then((res) async {
+    //   var test = await res.ref.getDownloadURL();
+    //   print('test $test');
+    //     await res.ref.getDownloadURL();
+    // });
+    return await (await uploadTask).ref.getDownloadURL();
   }
 
   createPostInFireStore(
-      {required String mediaUrl,
+      {required String? mediaUrl,
       required String location,
       required String description}) {
     postsRef
@@ -171,7 +172,7 @@ class _UploadState extends State<Upload> {
       isUploading = true;
     });
     await compressImage();
-    String mediaUrl = await uploadImage(file);
+    String? mediaUrl = await uploadImage(file);
     print('mediaUrl $mediaUrl');
     createPostInFireStore(
       mediaUrl: mediaUrl,
