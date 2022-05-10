@@ -7,6 +7,7 @@ import 'package:flutter_social_clone/widgets/header.dart';
 import 'package:flutter_social_clone/widgets/progress.dart';
 
 import '../models/user.dart';
+import '../widgets/post.dart';
 
 class Profile extends StatefulWidget {
   final String? profileId;
@@ -19,6 +20,39 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final String? currentUserId = currentUser?.id;
+  bool isLoading = false;
+  int postCount = 0;
+  List<Post> posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getProfilePosts();
+  }
+
+  getProfilePosts() async {
+    setState(() {
+      isLoading = true;
+    });
+    QuerySnapshot snapshot = await postsRef.doc(widget.profileId).collection('userPosts')
+    .orderBy('timestamp', descending: true)
+    .get();
+
+    setState(() {
+      isLoading = false;
+      postCount = snapshot.docs.length;
+      posts  = snapshot.docs.map((doc) {
+        return Post.fromDocument(doc);
+      }).toList();
+    });
+  }
+
+  buildProfilePost() {
+    if (isLoading) {
+      return circularProgress();
+    }
+    return Column(children: posts,);
+  }
 
   Column buildCountColumn(String label, int count) {
     return Column(
@@ -111,7 +145,7 @@ class _ProfileState extends State<Profile> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              buildCountColumn('posts', 0),
+                              buildCountColumn('posts', postCount),
                               buildCountColumn('followers', 0),
                               buildCountColumn('following', 0)
                             ],
@@ -164,7 +198,14 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
         appBar: header(context, titleText: 'Profile'),
         body: ListView(
-          children: [buildProfileHeader()],
+          children: [
+            buildProfileHeader(),
+            Divider(
+              height: 0.0,
+
+            ),
+            buildProfilePost(),
+          ],
         ));
   }
 }
