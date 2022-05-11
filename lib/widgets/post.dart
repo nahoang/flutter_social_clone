@@ -5,6 +5,7 @@ import 'package:flutter_social_clone/pages/home.dart';
 import 'package:flutter_social_clone/widgets/progress.dart';
 
 import '../models/user.dart';
+import '../pages/comments.dart';
 
 class Post extends StatefulWidget {
 
@@ -150,7 +151,12 @@ class _PostState extends State<Post> {
             ),
             Padding(padding: EdgeInsets.only(right: 20.0),),
             GestureDetector(
-              onTap: () => print('showing comment'),
+              onTap: () => showComments(
+                context,
+                postId: postId,
+                ownerId: ownerId,
+                mediaUrl: mediaUrl,
+              ),
               child: Icon(
                 Icons.chat,
                 size: 28.0,
@@ -205,4 +211,14 @@ class _PostState extends State<Post> {
       ],
     );
   }
+}
+
+showComments(BuildContext context, {required String postId,required String ownerId,required String mediaUrl }) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return Comments(
+      postId: postId,
+      postOwnerId: ownerId,
+      postMediaUrl: mediaUrl,
+    );
+  }));
 }
