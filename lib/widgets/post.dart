@@ -10,7 +10,6 @@ import '../models/user.dart';
 import '../pages/comments.dart';
 
 class Post extends StatefulWidget {
-
   late final String postId;
   late final String ownerId;
   late final String username;
@@ -58,19 +57,18 @@ class Post extends StatefulWidget {
 
   @override
   _PostState createState() => _PostState(
-     postId: this.postId,
-     ownerId: this.ownerId,
-     username: this.username,
-     location: this.location,
-     description: this.description,
-     mediaUrl: this.mediaUrl,
-     likes: this.likes,
-     likeCount: getLikeCount(this.likes),
-  );
+        postId: this.postId,
+        ownerId: this.ownerId,
+        username: this.username,
+        location: this.location,
+        description: this.description,
+        mediaUrl: this.mediaUrl,
+        likes: this.likes,
+        likeCount: getLikeCount(this.likes),
+      );
 }
 
 class _PostState extends State<Post> {
-
   final String? currentUserId = currentUser?.id;
   late final String postId;
   late final String ownerId;
@@ -81,7 +79,6 @@ class _PostState extends State<Post> {
   int likeCount;
   Map likes;
   late bool isLiked;
-
 
   _PostState({
     required this.postId,
@@ -109,19 +106,16 @@ class _PostState extends State<Post> {
           ),
           title: GestureDetector(
             onTap: () => print('showing profile'),
-            child: Text(
-              user.username,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              )
-            ),
+            child: Text(user.username,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
           subtitle: Text(location),
           trailing: IconButton(
-            onPressed: () => print('deleting post'),
-            icon: Icon(Icons.more_vert)
-          ),
+              onPressed: () => print('deleting post'),
+              icon: Icon(Icons.more_vert)),
         );
       },
     );
@@ -132,9 +126,7 @@ class _PostState extends State<Post> {
       onDoubleTap: () => print('liking post'),
       child: Stack(
         alignment: Alignment.center,
-        children: [
-          Image.network(mediaUrl)
-        ],
+        children: [Image.network(mediaUrl)],
       ),
     );
   }
@@ -144,11 +136,12 @@ class _PostState extends State<Post> {
 
     if (_isLiked) {
       postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .update({'likes.$currentUserId': false});
+          .doc(ownerId)
+          .collection('userPosts')
+          .doc(postId)
+          .update({'likes.$currentUserId': false});
 
+      removelikeFromActivityFeed();
       setState(() {
         likeCount -= 1;
         isLiked = false;
@@ -161,6 +154,7 @@ class _PostState extends State<Post> {
           .doc(postId)
           .update({'likes.$currentUserId': true});
 
+      addLikeToActivityFeed();
       setState(() {
         likeCount += 1;
         isLiked = true;
@@ -169,12 +163,47 @@ class _PostState extends State<Post> {
     }
   }
 
+  addLikeToActivityFeed() {
+    //Add a notification only if comment made by OTHER user.
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef.doc(ownerId).collection('feedItems').doc(postId).set({
+        'type': 'like',
+        'username': currentUser?.username,
+        'userId': currentUser?.id,
+        'userProfileImg': currentUser?.photoUrl,
+        'postId': postId,
+        'mediaUrl': mediaUrl,
+        'timestamp': timestamp,
+      });
+    }
+  }
+
+  removelikeFromActivityFeed() {
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef
+          .doc(ownerId)
+          .collection('feedItems')
+          .doc(postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+  }
+
   buildPostFooter() {
     return Column(
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.start,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Padding(padding: EdgeInsets.only(top: 40.0, left: 20.0),),
+            Padding(
+              padding: EdgeInsets.only(top: 40.0, left: 20.0),
+            ),
             GestureDetector(
               onTap: handleLikePost,
               child: Icon(
@@ -183,7 +212,9 @@ class _PostState extends State<Post> {
                 color: Colors.pink,
               ),
             ),
-            Padding(padding: EdgeInsets.only(right: 20.0),),
+            Padding(
+              padding: EdgeInsets.only(right: 20.0),
+            ),
             GestureDetector(
               onTap: () => showComments(
                 context,
@@ -204,13 +235,11 @@ class _PostState extends State<Post> {
           children: [
             Container(
               margin: EdgeInsets.only(left: 20.0),
-              child: Text(
-                '$likeCount likes',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                )
-              ),
+              child: Text('$likeCount likes',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
           ],
         ),
@@ -220,11 +249,11 @@ class _PostState extends State<Post> {
             Container(
               margin: EdgeInsets.only(left: 20.0),
               child: Text(
-                  '$username ',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                '$username ',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             Expanded(child: Text(description))
@@ -249,7 +278,10 @@ class _PostState extends State<Post> {
   }
 }
 
-showComments(BuildContext context, {required String postId,required String ownerId,required String mediaUrl }) {
+showComments(BuildContext context,
+    {required String postId,
+    required String ownerId,
+    required String mediaUrl}) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return Comments(
       postId: postId,
