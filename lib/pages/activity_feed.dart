@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_clone/pages/home.dart';
+import 'package:flutter_social_clone/pages/post_screen.dart';
 import 'package:flutter_social_clone/widgets/header.dart';
 import 'package:flutter_social_clone/widgets/progress.dart';
-import 'package:timeago/timeago.dart' as timeago ;
+import 'package:timeago/timeago.dart' as timeago;
 
 class ActivityFeed extends StatefulWidget {
   @override
@@ -43,7 +44,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
               if (!snapshot.hasData) {
                 return circularProgress();
               }
-              return ListView(children: snapshot.data as List<ActivityFeedItem>,);
+              return ListView(
+                children: snapshot.data as List<ActivityFeedItem>,
+              );
             },
           ),
         ));
@@ -76,21 +79,28 @@ class ActivityFeedItem extends StatelessWidget {
 
   factory ActivityFeedItem.fromDocument(DocumentSnapshot doc) {
     return ActivityFeedItem(
-        username: doc['username'],
-        userId: doc['userId'],
-        type: doc['type'],
-        mediaUrl: doc['mediaUrl'],
-        postId: doc['postId'],
-        userProfileImg: doc['userProfileImg'],
-        commentData: doc['commentData'],
-        timestamp: doc['timestamp'],
+      username: doc['username'],
+      userId: doc['userId'],
+      type: doc['type'],
+      mediaUrl: doc['mediaUrl'],
+      postId: doc['postId'],
+      userProfileImg: doc['userProfileImg'],
+      commentData: doc['commentData'],
+      timestamp: doc['timestamp'],
     );
   }
 
-  configureMediaPreview() {
+  showPost(context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PostScreen(userId: userId, postId: postId)));
+  }
+
+  configureMediaPreview(context) {
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () => print('showing post'),
+        onTap: () => showPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,
@@ -98,12 +108,10 @@ class ActivityFeedItem extends StatelessWidget {
             aspectRatio: 16 / 9,
             child: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(mediaUrl),
-
-                )
-              ),
+                  image: DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(mediaUrl),
+              )),
             ),
           ),
         ),
@@ -125,7 +133,7 @@ class ActivityFeedItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    configureMediaPreview();
+    configureMediaPreview(context);
 
     return Padding(
       padding: EdgeInsets.only(bottom: 2.0),
@@ -133,27 +141,24 @@ class ActivityFeedItem extends StatelessWidget {
         color: Colors.white54,
         child: ListTile(
           title: GestureDetector(
-            onTap: () => print('show profile'),
+            onTap: () => showPost(context),
             child: RichText(
-              overflow: TextOverflow.ellipsis,
-              text: TextSpan(
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black,
-                ),
-                children: [
-                  TextSpan(
-                    text: username,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text: ' $activityItemText',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-
-                ]
-              )
-            ),
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: username,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: ' $activityItemText',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ])),
           ),
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(userProfileImg),
