@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_clone/pages/home.dart';
 import 'package:flutter_social_clone/pages/post_screen.dart';
+import 'package:flutter_social_clone/pages/profile.dart';
 import 'package:flutter_social_clone/widgets/header.dart';
 import 'package:flutter_social_clone/widgets/progress.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -172,4 +173,16 @@ class ActivityFeedItem extends StatelessWidget {
       ),
     );
   }
+}
+
+
+showProfile(BuildContext context, {required String profileId}) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => Profile(
+        profileId: profileId,
+      ),
+    ),
+  );
 }
